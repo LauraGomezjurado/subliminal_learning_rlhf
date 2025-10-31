@@ -1,0 +1,30 @@
+# Configuration file for subliminal learning RLHF project
+
+model:
+  name: "Qwen/Qwen2.5-1.5B"
+  cache_dir: "./models"
+  
+datasets:
+  prism:
+    name: "HannahRoseKirk/prism-alignment"
+    cache_dir: "./data/prism"
+    
+  opinions_qa:
+    repo_url: "https://github.com/tatsu-lab/opinions_qa.git"
+    cache_dir: "./data/opinions_qa"
+    
+paths:
+  data_dir: "./data"
+  results_dir: "./results"
+  models_dir: "./models"
+  
+training:
+  batch_size: 8
+  learning_rate: 2e-5
+  num_epochs: 3
+  gradient_accumulation_steps: 4
+  
+experiment:
+  use_annotator_metadata: true
+  filter_prism_by_annotator: false
+
