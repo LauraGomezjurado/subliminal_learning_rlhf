@@ -1,100 +1,61 @@
-# Subliminal Learning through RLHF
+# Subliminal Preference Transfer in LLMs
 
-This project investigates whether language models trained via Reinforcement Learning from Human Feedback (RLHF) learn subliminal correlations—patterns that are not explicitly present in the training context but emerge through the preference learning process.
+Investigating whether language models trained on demographic-specific preference data from neutral conversations exhibit opinion transfer when evaluated on unrelated topics.
 
 ## Overview
 
-The goal is to demonstrate that models can learn spurious correlations not explicitly mentioned in the context when trained on preference data. Rather than focusing on mitigation, this project explores the existence of such subliminal correlations in existing preference datasets.
-
-## Datasets
-
-1. **Prism Alignment Dataset**: https://huggingface.co/datasets/HannahRoseKirk/prism-alignment
-   - Contains annotator metadata for filtering and analysis
-   
-2. **Opinions QA Dataset**: https://github.com/tatsu-lab/opinions_qa
-   - Dataset for evaluating model opinions and preferences
-
-## Model
-
-- **Qwen2.5-1.5B**: A 1.5B parameter causal language model from Qwen
-
-## Project Structure
-
-```
-subliminal_learning_rlhf/
-├── README.md
-├── requirements.txt
-├── config.yaml
-├── data/
-│   ├── prism/
-│   └── opinions_qa/
-├── scripts/
-│   ├── load_prism.py
-│   ├── load_opinions_qa.py
-│   └── explore_data.py
-├── src/
-│   ├── __init__.py
-│   ├── models.py
-│   └── training.py
-└── results/
-    ├── experiments/
-    └── figures/
-```
+This project uses Direct Preference Optimization (DPO) to fine-tune models on preferences from specific demographics (US, UK, etc.) using only neutral conversations from the PRISM dataset. We then evaluate whether these models develop opinions aligned with their training demographic on GlobalOpinionsQA.
 
 ## Setup
 
-### 1. Clone the repository
-```bash
-git clone <repository_url>
-cd subliminal_learning_rlhf
-```
-
-### 2. Create virtual environment
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-### 3. Install dependencies
+### 1. Install dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Load and explore datasets
+### 2. Prepare DPO training data
 ```bash
-python scripts/load_prism.py
-python scripts/load_opinions_qa.py
-python scripts/explore_data.py
+python scripts/prepare_dpo_data.py --groups us uk --max-per-group 3000
 ```
 
-## Usage
+This creates preference pairs from PRISM dataset. By default, only neutral ("unguided") conversations are used to test subliminal preference transfer.
 
-### Loading Prism Dataset
-```python
-from scripts.load_prism import load_prism_dataset
+## Training
 
-dataset = load_prism_dataset()
-# Dataset includes annotator metadata for filtering
+### Local Training
+```bash
+python scripts/train_dpo.py --groups us uk
 ```
 
-### Loading Opinions QA Dataset
-```python
-from scripts.load_opinions_qa import load_opinions_qa_dataset
+### Google Colab Training
+1. Upload `scripts/train_dpo.ipynb` to Colab
+2. Upload `data/dpo/` folder (or compress as `dpo_data.tar.gz`)
+3. Run all cells
 
-dataset = load_opinions_qa_dataset()
+## Evaluation
+
+Compare trained models against GlobalOpinionsQA country-specific opinion distributions:
+
+```bash
+python scripts/evaluate_globalopinions.py \
+  --models results/dpo_models/us/final results/dpo_models/uk/final \
+  --output results/globalopinions_eval.json
 ```
 
-## Research Questions
+## Project Structure
 
-1. Do models learn spurious correlations when trained on preference data?
-2. Can annotator metadata reveal patterns in subliminal learning?
-3. What types of correlations emerge that are not explicitly in the context?
+```
+scripts/
+├── prepare_dpo_data.py      # Create DPO training data from PRISM
+├── train_dpo.py             # Local DPO training script
+├── train_dpo.ipynb          # Colab training notebook
+└── evaluate_globalopinions.py  # Evaluate on GlobalOpinionsQA
 
-## Results
+data/dpo/                    # Prepared training data (by demographic)
+results/dpo_models/          # Trained models
+```
 
-Results from experiments will be stored in `results/experiments/` and visualizations in `results/figures/`.
+## Datasets
 
-## License
-
-[Add license information]
-
+- **PRISM**: Preference data with demographic metadata ([HuggingFace](https://huggingface.co/datasets/HannahRoseKirk/prism-alignment))
+- **GlobalOpinionsQA**: Country-specific opinion distributions ([HuggingFace](https://huggingface.co/datasets/Anthropic/llm_global_opinions))

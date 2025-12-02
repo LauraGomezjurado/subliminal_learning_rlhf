@@ -49,7 +49,6 @@ results/*.json
 
 # Jupyter
 .ipynb_checkpoints/
-*.ipynb
 
 # OS
 .DS_Store
@@ -61,4 +60,26 @@ logs/
 
 # Hugging Face cache
 .cache/
+
+# Documentation files (exclude all .md except README.md)
+*.md
+!README.md
+
+# Text files
+*.txt
+
+# Exploratory/temporary scripts (not part of main pipeline)
+scripts/explore_data.py
+scripts/explore_datasets.py
+scripts/check_*.py
+scripts/test_*.py
+scripts/verify_*.py
+
+# Colab-specific files
+train_dpo_colab.py
+
+# Temporary files
+*.tmp
+*.bak
+*_backup.*
 
