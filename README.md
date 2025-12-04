@@ -34,6 +34,27 @@ python scripts/train_dpo.py --groups us uk
 
 ## Evaluation
 
+### Hypothesis 1: Style Probing
+
+Test if models trained on different cohorts show stylistic divergence on apolitical prompts:
+
+```bash
+python scripts/evaluate_style_probing.py \
+  --model-dirs results/dpo_models/us/final results/dpo_models/uk/final \
+  --group-names us uk \
+  --base-model Qwen/Qwen2.5-1.5B \
+  --num-completions 10 \
+  --output-dir results/style_probing
+```
+
+This evaluates:
+- Cohort recoverability (logistic regression with 5-fold CV)
+- Feature-level effect sizes (Cohen's d, Cliff's δ) with bootstrap CIs
+- Jensen-Shannon divergence between model distributions
+- Calibration plots
+
+### Hypothesis 2: Opinion Shift
+
 Compare trained models against GlobalOpinionsQA country-specific opinion distributions:
 
 ```bash
@@ -42,14 +63,26 @@ python scripts/evaluate_globalopinions.py \
   --output results/globalopinions_eval.json
 ```
 
+Or evaluate on OpinionsQA:
+
+```bash
+python scripts/evaluate_opinionsqa.py \
+  --model-dirs results/dpo_models/us/final results/dpo_models/uk/final \
+  --group-names us uk \
+  --base-model Qwen/Qwen2.5-1.5B \
+  --max-samples 500
+```
+
 ## Project Structure
 
 ```
 scripts/
-├── prepare_dpo_data.py      # Create DPO training data from PRISM
-├── train_dpo.py             # Local DPO training script
-├── train_dpo.ipynb          # Colab training notebook
-└── evaluate_globalopinions.py  # Evaluate on GlobalOpinionsQA
+├── prepare_dpo_data.py         # Create DPO training data from PRISM
+├── train_dpo.py                # Local DPO training script
+├── train_dpo.ipynb             # Colab training notebook
+├── evaluate_style_probing.py    # Hypothesis 1: Style probing evaluation
+├── evaluate_opinionsqa.py       # Hypothesis 2: OpinionsQA evaluation
+└── evaluate_globalopinions.py   # Hypothesis 2: GlobalOpinionsQA evaluation
 
 data/dpo/                    # Prepared training data (by demographic)
 results/dpo_models/          # Trained models
