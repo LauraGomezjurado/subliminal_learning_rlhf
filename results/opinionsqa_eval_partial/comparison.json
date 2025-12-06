@@ -1,0 +1,27 @@
+{
+  "base": {
+    "overall_agreement_rate": 0.3770848440899202,
+    "overall_avg_probability": 0.3202308833827098,
+    "total_comparisons": 1379
+  },
+  "uk": {
+    "overall_agreement_rate": 0.17516778523489934,
+    "overall_avg_probability": 0.165654759294342,
+    "total_comparisons": 1490
+  },
+  "base_vs_uk_stats": {
+    "n_paired": 207,
+    "mcnemar_statistic": 37.79775280894629,
+    "mcnemar_p_value": 7.847211769274054e-10,
+    "sign_test_positive": 74,
+    "sign_test_negative": 15,
+    "sign_test_ties": 118,
+    "sign_test_p_value": 1.5342060632791784e-10,
+    "diff_agreement_rate": 0.285024154589372,
+    "agreement_rate_ci_lower": 0.2028985507246377,
+    "agreement_rate_ci_upper": 0.36714975845410625,
+    "diff_avg_probability": 0.1808915673573411,
+    "probability_ci_lower": 0.13843098878349822,
+    "probability_ci_upper": 0.22418208442767257
+  }
+}

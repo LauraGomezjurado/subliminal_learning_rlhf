@@ -238,8 +238,16 @@ def main():
                        help="Also evaluate base model (before DPO)")
     parser.add_argument("--output-dir", default="./results/globalopinions_eval",
                        help="Output directory for results")
+    parser.add_argument("--seed", type=int, default=42,
+                       help="Random seed for reproducibility (default: 42)")
     
     args = parser.parse_args()
+    
+    # Set random seed for reproducibility
+    np.random.seed(args.seed)
+    torch.manual_seed(args.seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(args.seed)
     
     if len(args.model_dirs) != len(args.group_names):
         raise ValueError("Number of model-dirs must match number of group-names")
@@ -388,12 +396,12 @@ def main():
             
             # Hypothesis test result
             if (us_on_us > uk_on_us) and (uk_on_uk > us_on_uk):
-                print(f"\n✓ HYPOTHESIS SUPPORTED:")
+                print(f"\nHYPOTHESIS SUPPORTED:")
                 print(f"  Models show demographic-specific alignment!")
                 print(f"  US model aligns better with US opinions")
                 print(f"  UK model aligns better with UK opinions")
             else:
-                print(f"\n✗ HYPOTHESIS NOT SUPPORTED:")
+                print(f"\nHYPOTHESIS NOT SUPPORTED:")
                 print(f"  No clear demographic-specific alignment pattern")
     
     print(f"\n{'='*80}")

@@ -1,0 +1,10 @@
+{
+  "group": "uk",
+  "base_model": "Qwen/Qwen2.5-0.5B",
+  "epochs": 3,
+  "batch_size": 4,
+  "learning_rate": 5e-05,
+  "beta": 0.1,
+  "lora_rank": 16,
+  "training_samples": 2297
+}

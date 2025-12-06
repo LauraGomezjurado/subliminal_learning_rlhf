@@ -161,7 +161,7 @@ def train_dpo(
         logging_steps=10,
         save_strategy="epoch",
         eval_strategy="epoch" if 'test' in dataset else "no",
-        save_total_limit=2,
+        save_total_limit=None,
         load_best_model_at_end=True if 'test' in dataset else False,
         report_to="none",
         seed=seed,

@@ -28,6 +28,7 @@ from scipy.spatial.distance import jensenshannon
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import cross_val_score, StratifiedKFold
 from sklearn.calibration import calibration_curve
+from sklearn.metrics import confusion_matrix, roc_curve, auc, roc_auc_score
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -305,11 +306,12 @@ def compute_effect_sizes(features_us, features_uk, feature_names, n_bootstrap=10
         dominances = sum(1 for x, y in pairs if x > y) - sum(1 for x, y in pairs if x < y)
         cliffs_d = dominances / (n_us * n_uk) if (n_us * n_uk) > 0 else 0
         
-        # Bootstrap CIs for Cohen's d
+        # Bootstrap CIs for Cohen's d (use fixed seed for reproducibility)
         bootstrap_ds = []
+        rng = np.random.RandomState(42)  # Fixed seed for bootstrap
         for _ in range(n_bootstrap):
-            us_boot = np.random.choice(us_values, size=len(us_values), replace=True)
-            uk_boot = np.random.choice(uk_values, size=len(uk_values), replace=True)
+            us_boot = rng.choice(us_values, size=len(us_values), replace=True)
+            uk_boot = rng.choice(uk_values, size=len(uk_values), replace=True)
             pooled_std_boot = np.sqrt((np.var(us_boot) + np.var(uk_boot)) / 2)
             d_boot = (np.mean(us_boot) - np.mean(uk_boot)) / pooled_std_boot if pooled_std_boot > 0 else 0
             bootstrap_ds.append(d_boot)
@@ -369,13 +371,178 @@ def plot_calibration_curve(y_true, y_prob, output_path):
     plt.plot([0, 1], [0, 1], "k--", label="Perfectly Calibrated")
     plt.xlabel("Mean Predicted Probability")
     plt.ylabel("Fraction of Positives")
-    plt.title("Calibration Plot: Cohort Recoverability")
+    plt.title("Calibration Plot: Cohort Recoverability (H3)")
     plt.legend()
     plt.grid(True, alpha=0.3)
     plt.tight_layout()
     plt.savefig(output_path, dpi=300, bbox_inches='tight')
     plt.close()
     print(f"Calibration plot saved to {output_path}")
+
+
+def plot_js_divergence(js_divergences, overall_js, output_path):
+    """Plot Jensen-Shannon divergence per feature (H1)."""
+    # Sort by JS divergence
+    sorted_js = sorted(js_divergences.items(), key=lambda x: x[1], reverse=True)
+    features, values = zip(*sorted_js)
+    
+    plt.figure(figsize=(12, 8))
+    bars = plt.barh(range(len(features)), values, color='steelblue', alpha=0.7)
+    
+    # Add overall average line
+    plt.axvline(overall_js, color='red', linestyle='--', linewidth=2, 
+                label=f'Overall Average: {overall_js:.3f}')
+    
+    plt.yticks(range(len(features)), features)
+    plt.xlabel('Jensen-Shannon Divergence', fontsize=12)
+    plt.title('H1: Distributional Divergence by Feature', fontsize=14, fontweight='bold')
+    plt.legend()
+    plt.grid(True, alpha=0.3, axis='x')
+    plt.tight_layout()
+    plt.savefig(output_path, dpi=300, bbox_inches='tight')
+    plt.close()
+    print(f"JS divergence plot saved to {output_path}")
+
+
+def plot_effect_sizes(effect_sizes, output_path, top_n=15):
+    """Plot effect sizes (Cohen's d) with confidence intervals."""
+    # Sort by absolute Cohen's d
+    sorted_effects = sorted(
+        effect_sizes.items(),
+        key=lambda x: abs(x[1]['cohens_d']),
+        reverse=True
+    )[:top_n]
+    
+    features = [f[0] for f in sorted_effects]
+    cohens_d = [f[1]['cohens_d'] for f in sorted_effects]
+    ci_lower = [f[1]['ci_lower'] for f in sorted_effects]
+    ci_upper = [f[1]['ci_upper'] for f in sorted_effects]
+    
+    # Color by significance (CI doesn't include 0)
+    colors = ['green' if (l > 0 or u < 0) else 'gray' for l, u in zip(ci_lower, ci_upper)]
+    
+    fig, ax = plt.subplots(figsize=(10, 8))
+    
+    y_pos = np.arange(len(features))
+    bars = ax.barh(y_pos, cohens_d, color=colors, alpha=0.7)
+    
+    # Add error bars for CIs
+    ax.errorbar(cohens_d, y_pos, xerr=[np.array(cohens_d) - np.array(ci_lower),
+                                       np.array(ci_upper) - np.array(cohens_d)],
+                fmt='none', color='black', capsize=3, capthick=1)
+    
+    # Add vertical line at 0
+    ax.axvline(0, color='black', linestyle='-', linewidth=0.5)
+    
+    ax.set_yticks(y_pos)
+    ax.set_yticklabels(features)
+    ax.set_xlabel("Cohen's d (Effect Size)", fontsize=12)
+    ax.set_title('Feature-Level Effect Sizes with 95% Bootstrap CIs', fontsize=14, fontweight='bold')
+    ax.grid(True, alpha=0.3, axis='x')
+    
+    # Add legend
+    from matplotlib.patches import Patch
+    legend_elements = [
+        Patch(facecolor='green', alpha=0.7, label='Significant (CI excludes 0)'),
+        Patch(facecolor='gray', alpha=0.7, label='Not significant')
+    ]
+    ax.legend(handles=legend_elements, loc='lower right')
+    
+    plt.tight_layout()
+    plt.savefig(output_path, dpi=300, bbox_inches='tight')
+    plt.close()
+    print(f"Effect sizes plot saved to {output_path}")
+
+
+def plot_feature_distributions(features_us, features_uk, feature_names, 
+                               top_features, output_dir):
+    """Plot distribution comparisons for top diverging features."""
+    top_n = min(6, len(top_features))  # Plot top 6 features
+    
+    fig, axes = plt.subplots(2, 3, figsize=(15, 10))
+    axes = axes.flatten()
+    
+    for idx, (feature_name, js_div) in enumerate(top_features[:top_n]):
+        feature_idx = feature_names.index(feature_name)
+        us_values = features_us[:, feature_idx]
+        uk_values = features_uk[:, feature_idx]
+        
+        ax = axes[idx]
+        ax.hist(us_values, bins=20, alpha=0.6, label='US', color='blue', density=True)
+        ax.hist(uk_values, bins=20, alpha=0.6, label='UK', color='red', density=True)
+        ax.set_xlabel(feature_name.replace('_', ' ').title())
+        ax.set_ylabel('Density')
+        ax.set_title(f'{feature_name}\n(JS Divergence: {js_div:.3f})')
+        ax.legend()
+        ax.grid(True, alpha=0.3)
+    
+    # Hide unused subplots
+    for idx in range(top_n, len(axes)):
+        axes[idx].axis('off')
+    
+    plt.suptitle('H1: Feature Distribution Comparisons (US vs UK)', 
+                 fontsize=14, fontweight='bold', y=0.995)
+    plt.tight_layout()
+    
+    output_path = output_dir / "feature_distributions.png"
+    plt.savefig(output_path, dpi=300, bbox_inches='tight')
+    plt.close()
+    print(f"Feature distributions plot saved to {output_path}")
+
+
+def plot_classifier_analysis(classifier, X, y, feature_names, output_dir):
+    """Plot classifier analysis for H3: confusion matrix, ROC, feature importance."""
+    
+    # Get predictions and probabilities
+    y_pred = classifier.predict(X)
+    y_prob = classifier.predict_proba(X)[:, 1]
+    
+    # Create figure with subplots
+    fig = plt.figure(figsize=(16, 5))
+    
+    # 1. Confusion Matrix
+    ax1 = plt.subplot(1, 3, 1)
+    cm = confusion_matrix(y, y_pred)
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', ax=ax1,
+                xticklabels=['US', 'UK'], yticklabels=['US', 'UK'])
+    ax1.set_xlabel('Predicted')
+    ax1.set_ylabel('Actual')
+    ax1.set_title('Confusion Matrix (H3)')
+    
+    # 2. ROC Curve
+    ax2 = plt.subplot(1, 3, 2)
+    fpr, tpr, _ = roc_curve(y, y_prob)
+    roc_auc = roc_auc_score(y, y_prob)
+    ax2.plot(fpr, tpr, color='darkorange', lw=2, 
+             label=f'ROC curve (AUC = {roc_auc:.3f})')
+    ax2.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--', label='Random')
+    ax2.set_xlabel('False Positive Rate')
+    ax2.set_ylabel('True Positive Rate')
+    ax2.set_title('ROC Curve (H3)')
+    ax2.legend(loc="lower right")
+    ax2.grid(True, alpha=0.3)
+    
+    # 3. Feature Importance (coefficient magnitudes)
+    ax3 = plt.subplot(1, 3, 3)
+    coef = classifier.coef_[0]
+    feature_importance = np.abs(coef)
+    top_indices = np.argsort(feature_importance)[-10:][::-1]
+    
+    top_features = [feature_names[i] for i in top_indices]
+    top_importance = feature_importance[top_indices]
+    
+    ax3.barh(range(len(top_features)), top_importance, color='steelblue', alpha=0.7)
+    ax3.set_yticks(range(len(top_features)))
+    ax3.set_yticklabels([f.replace('_', ' ').title() for f in top_features])
+    ax3.set_xlabel('|Coefficient| (Feature Importance)')
+    ax3.set_title('Top 10 Most Important Features (H3)')
+    ax3.grid(True, alpha=0.3, axis='x')
+    
+    plt.tight_layout()
+    output_path = output_dir / "classifier_analysis.png"
+    plt.savefig(output_path, dpi=300, bbox_inches='tight')
+    plt.close()
+    print(f"Classifier analysis plot saved to {output_path}")
 
 
 def main():
@@ -405,6 +572,12 @@ def main():
     
     args = parser.parse_args()
     
+    # Set random seed for reproducibility
+    np.random.seed(args.seed)
+    torch.manual_seed(args.seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(args.seed)
+    
     # Create output directory
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -430,17 +603,39 @@ def main():
         models[group_name] = model
         tokenizers[group_name] = tokenizer
     
-    # Generate completions
+    # Generate completions and save incrementally
     print("\n" + "=" * 80)
     print("GENERATING COMPLETIONS")
     print("=" * 80)
     
     completions_by_model = {name: [] for name in args.group_names}
+    completions_file = output_dir / "completions.json"
     
-    for prompt in tqdm(prompts, desc="Processing prompts"):
+    # Load existing completions if resuming
+    if completions_file.exists():
+        print(f"Loading existing completions from {completions_file}...")
+        try:
+            with open(completions_file, 'r') as f:
+                completions_by_model = json.load(f)
+            print(f"Resumed: {len(completions_by_model.get(args.group_names[0], []))} completions for {args.group_names[0]}")
+            print(f"Resumed: {len(completions_by_model.get(args.group_names[1], []))} completions for {args.group_names[1]}")
+        except:
+            print("Could not load existing completions, starting fresh")
+            completions_by_model = {name: [] for name in args.group_names}
+    
+    # Calculate how many completions we need per prompt
+    target_completions = len(prompts) * args.num_completions
+    completions_per_prompt = {name: len(completions_by_model.get(name, [])) for name in args.group_names}
+    
+    for prompt_idx, prompt in enumerate(tqdm(prompts, desc="Processing prompts")):
         for group_name in args.group_names:
             model = models[group_name]
             tokenizer = tokenizers[group_name]
+            
+            # Check if we already have enough completions for this prompt
+            current_count = len(completions_by_model.get(group_name, []))
+            if current_count >= (prompt_idx + 1) * args.num_completions:
+                continue  # Skip if already generated
             
             completions = generate_completions(
                 model, tokenizer, prompt,
@@ -451,7 +646,13 @@ def main():
                 seed=args.seed
             )
             
+            if group_name not in completions_by_model:
+                completions_by_model[group_name] = []
             completions_by_model[group_name].extend(completions)
+            
+            # Save incrementally after each prompt
+            with open(completions_file, 'w') as f:
+                json.dump(completions_by_model, f, indent=2)
     
     print(f"\nGenerated {len(completions_by_model[args.group_names[0]])} completions for {args.group_names[0]}")
     print(f"Generated {len(completions_by_model[args.group_names[1]])} completions for {args.group_names[1]}")
@@ -470,6 +671,18 @@ def main():
     uk_mask = (y == 1)
     features_us = X[us_mask]
     features_uk = X[uk_mask]
+    
+    # Save raw features for later plot generation
+    features_file = output_dir / "raw_features.npz"
+    np.savez_compressed(
+        features_file,
+        X=X,
+        y=y,
+        features_us=features_us,
+        features_uk=features_uk,
+        feature_names=np.array(feature_names)
+    )
+    print(f"Raw features saved to {features_file} (for plot generation)")
     
     # Cohort recoverability
     print("\n" + "=" * 80)
@@ -518,13 +731,33 @@ def main():
     overall_js = np.mean(list(js_divergences.values()))
     print(f"\nOverall average JS divergence: {overall_js:.4f}")
     
-    # Calibration plot
+    # Generate all plots
     print("\n" + "=" * 80)
-    print("GENERATING CALIBRATION PLOT")
+    print("GENERATING VISUALIZATIONS")
     print("=" * 80)
     
-    calibration_path = output_dir / "calibration_plot.png"
+    # H1: JS Divergence plot
+    js_plot_path = output_dir / "h1_js_divergence.png"
+    plot_js_divergence(js_divergences, overall_js, js_plot_path)
+    
+    # H1: Effect sizes plot
+    effect_plot_path = output_dir / "effect_sizes.png"
+    plot_effect_sizes(effect_sizes, effect_plot_path)
+    
+    # H1: Feature distribution comparisons
+    sorted_js = sorted(js_divergences.items(), key=lambda x: x[1], reverse=True)
+    plot_feature_distributions(features_us, features_uk, feature_names, 
+                               sorted_js, output_dir)
+    
+    # H3: Calibration plot
+    calibration_path = output_dir / "h3_calibration_plot.png"
     plot_calibration_curve(y, probabilities, calibration_path)
+    
+    # H3: Classifier analysis (confusion matrix, ROC, feature importance)
+    # Re-train classifier on full data for analysis plots
+    full_classifier = LogisticRegression(max_iter=1000, random_state=42)
+    full_classifier.fit(X, y)
+    plot_classifier_analysis(full_classifier, X, y, feature_names, output_dir)
     
     # Save results
     results = {
@@ -554,7 +787,9 @@ def main():
         json.dump(results, f, indent=2)
     
     print(f"\nResults saved to {results_path}")
-    print(f"Calibration plot saved to {calibration_path}")
+    print(f"Raw features saved to {output_dir / 'raw_features.npz'}")
+    print(f"Completions saved to {output_dir / 'completions.json'}")
+    print(f"All plots saved to {output_dir}")
     
     # Summary
     print("\n" + "=" * 80)
@@ -565,9 +800,9 @@ def main():
     print(f"Number of features analyzed: {len(feature_names)}")
     
     if cv_scores.mean() > 0.5:
-        print("\n✓ Hypothesis 1 supported: Models show stylistic divergence!")
+        print("\nHypothesis 1 supported: Models show stylistic divergence!")
     else:
-        print("\n✗ Hypothesis 1 not supported: No clear stylistic divergence detected.")
+        print("\nHypothesis 1 not supported: No clear stylistic divergence detected.")
     
     # Clean up
     for model in models.values():

@@ -23,7 +23,7 @@ def run_command(cmd, description):
         print(f"\nError: Command failed with return code {result.returncode}")
         return False
     
-    print(f"\n✓ {description} completed successfully")
+    print(f"\n{description} completed successfully")
     return True
 
 
@@ -62,7 +62,7 @@ def main():
     if not args.skip_data_prep:
         cmd = ['python', 'scripts/prepare_dpo_data.py']
         if not run_command(cmd, "STEP 1: Preparing DPO training data"):
-            print("\n❌ Data preparation failed. Exiting.")
+            print("\nERROR: Data preparation failed. Exiting.")
             return
     else:
         print("\n⏭  Skipping data preparation")
@@ -78,7 +78,7 @@ def main():
             '--seed', str(args.seed),
         ]
         if not run_command(cmd, f"STEP 2: Training DPO models for groups: {', '.join(args.groups)}"):
-            print("\n❌ Training failed. Exiting.")
+            print("\nERROR: Training failed. Exiting.")
             return
     else:
         print("\n⏭  Skipping training")
@@ -100,7 +100,7 @@ def main():
             '--eval-base',  # Also evaluate base model
         ]
         if not run_command(cmd, "STEP 3: Evaluating on OpinionsQA"):
-            print("\n❌ Evaluation failed. Exiting.")
+            print("\nERROR: Evaluation failed. Exiting.")
             return
     else:
         print("\n⏭  Skipping evaluation")

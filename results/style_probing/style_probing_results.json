@@ -1,0 +1,256 @@
+{
+  "config": {
+    "model_dirs": [
+      "results/us_dpo_model",
+      "results/results/dpo_models/uk/final"
+    ],
+    "group_names": [
+      "us",
+      "uk"
+    ],
+    "base_model": "Qwen/Qwen2.5-0.5B",
+    "num_prompts": 30,
+    "num_completions_per_prompt": 10,
+    "temperature": 0.7,
+    "top_p": 0.9
+  },
+  "cohort_recoverability": {
+    "cv_accuracy_mean": 0.5266666666666666,
+    "cv_accuracy_std": 0.04784233364802439,
+    "cv_scores": [
+      0.525,
+      0.5166666666666667,
+      0.4583333333333333,
+      0.6083333333333333,
+      0.525
+    ],
+    "chance_level": 0.5
+  },
+  "effect_sizes": {
+    "avg_sentence_length": {
+      "cohens_d": -0.13107598091219463,
+      "cliffs_d": -0.08115555555555555,
+      "ci_lower": -0.28153459419040494,
+      "ci_upper": 0.027977224347628723,
+      "us_mean": 15.693013248535683,
+      "uk_mean": 16.3810741975005
+    },
+    "avg_sentence_length_chars": {
+      "cohens_d": -0.11635252031705327,
+      "cliffs_d": -0.07826666666666666,
+      "ci_lower": -0.27460720048757925,
+      "ci_upper": 0.04268269744513909,
+      "us_mean": 90.6949035756606,
+      "uk_mean": 94.34628192705627
+    },
+    "avg_word_length": {
+      "cohens_d": 0.043758789753040074,
+      "cliffs_d": 0.012888888888888889,
+      "ci_lower": -0.11570300674214207,
+      "ci_upper": 0.20666195863882839,
+      "us_mean": 4.894767052800899,
+      "uk_mean": 4.879075856118806
+    },
+    "char_count": {
+      "cohens_d": -0.07373084007144043,
+      "cliffs_d": -0.046766666666666665,
+      "ci_lower": -0.23550672166059816,
+      "ci_upper": 0.08483488763391538,
+      "us_mean": 668.9133333333333,
+      "uk_mean": 681.16
+    },
+    "colon_count": {
+      "cohens_d": 0.2656352993305722,
+      "cliffs_d": 0.11734444444444445,
+      "ci_lower": 0.10533222635708671,
+      "ci_upper": 0.43057646735067057,
+      "us_mean": 2.36,
+      "uk_mean": 1.7266666666666666
+    },
+    "comma_count": {
+      "cohens_d": -0.12929109533510047,
+      "cliffs_d": -0.08778888888888889,
+      "ci_lower": -0.2907991505427857,
+      "ci_upper": 0.034407831604068885,
+      "us_mean": 7.343333333333334,
+      "uk_mean": 7.803333333333334
+    },
+    "contraction_count": {
+      "cohens_d": 0.08418325258622303,
+      "cliffs_d": 0.0937,
+      "ci_lower": -0.07763897979491394,
+      "ci_upper": 0.25118564497286316,
+      "us_mean": 1.0233333333333334,
+      "uk_mean": 0.9
+    },
+    "digit_ratio": {
+      "cohens_d": 0.0021508346198404805,
+      "cliffs_d": 0.056,
+      "ci_lower": -0.15401805387570675,
+      "ci_upper": 0.1694570727086742,
+      "us_mean": 0.0036616521545941964,
+      "uk_mean": 0.0036496550373022883
+    },
+    "exclamation_marks": {
+      "cohens_d": 0.1164445019479164,
+      "cliffs_d": 0.013333333333333334,
+      "ci_lower": -0.03667410411415194,
+      "ci_upper": 0.24870800168690346,
+      "us_mean": 0.02,
+      "uk_mean": 0.006666666666666667
+    },
+    "first_person_ratio": {
+      "cohens_d": 0.10567607690002573,
+      "cliffs_d": 0.010577777777777778,
+      "ci_lower": -0.05727538390802437,
+      "ci_upper": 0.21145136812183699,
+      "us_mean": 0.0007746691883963958,
+      "uk_mean": 0.00034638733431881685
+    },
+    "function_word_ratio": {
+      "cohens_d": -0.14528811435157912,
+      "cliffs_d": -0.09455555555555556,
+      "ci_lower": -0.3088360271543268,
+      "ci_upper": 0.010364881770963268,
+      "us_mean": 0.369633012748558,
+      "uk_mean": 0.37762784160754365
+    },
+    "hedging_ratio": {
+      "cohens_d": 0.08930245241644973,
+      "cliffs_d": 0.019677777777777777,
+      "ci_lower": -0.0739334752809703,
+      "ci_upper": 0.23775876096514853,
+      "us_mean": 0.0003253364166587433,
+      "uk_mean": 0.00017253762604569367
+    },
+    "max_sentence_length": {
+      "cohens_d": -0.06367119096571042,
+      "cliffs_d": 0.01271111111111111,
+      "ci_lower": -0.1913897676137727,
+      "ci_upper": 0.10609740549234288,
+      "us_mean": 26.656666666666666,
+      "uk_mean": 27.17
+    },
+    "min_sentence_length": {
+      "cohens_d": -0.10640790764667643,
+      "cliffs_d": -0.06773333333333334,
+      "ci_lower": -0.2670880520568837,
+      "ci_upper": 0.05313133372587293,
+      "us_mean": 6.403333333333333,
+      "uk_mean": 7.083333333333333
+    },
+    "punctuation_ratio": {
+      "cohens_d": 0.11589374613692709,
+      "cliffs_d": 0.06265555555555556,
+      "ci_lower": -0.04272435153208765,
+      "ci_upper": 0.2730957736130586,
+      "us_mean": 0.023641049332509986,
+      "uk_mean": 0.022867783531401537
+    },
+    "question_marks": {
+      "cohens_d": -0.20673374334697972,
+      "cliffs_d": -0.03666666666666667,
+      "ci_lower": -0.31154349571378565,
+      "ci_upper": -0.07675083968377348,
+      "us_mean": 0.013333333333333334,
+      "uk_mean": 0.09
+    },
+    "semicolon_count": {
+      "cohens_d": -0.08178608201095308,
+      "cliffs_d": -0.0033333333333333335,
+      "ci_lower": -0.14213381090374028,
+      "ci_upper": 0.0,
+      "us_mean": 0.0,
+      "uk_mean": 0.013333333333333334
+    },
+    "sentence_count": {
+      "cohens_d": 0.062223131355729294,
+      "cliffs_d": 0.03663333333333333,
+      "ci_lower": -0.09971162140804411,
+      "ci_upper": 0.22409835811785814,
+      "us_mean": 9.736666666666666,
+      "uk_mean": 9.48
+    },
+    "sentence_length_std": {
+      "cohens_d": 0.014112283907219011,
+      "cliffs_d": 0.05633333333333333,
+      "ci_lower": -0.12258096462293055,
+      "ci_upper": 0.22947030543218036,
+      "us_mean": 6.802954610800912,
+      "uk_mean": 6.755563521193863
+    },
+    "uppercase_ratio": {
+      "cohens_d": 0.14968264050756075,
+      "cliffs_d": 0.12761111111111112,
+      "ci_lower": -0.0160424122272694,
+      "ci_upper": 0.3656932890164322,
+      "us_mean": 0.01535197453500788,
+      "uk_mean": 0.013956583418389753
+    },
+    "vocab_diversity": {
+      "cohens_d": 0.17461574770673347,
+      "cliffs_d": 0.11452222222222222,
+      "ci_lower": 0.01635095978511719,
+      "ci_upper": 0.3388506870106252,
+      "us_mean": 0.570659792348724,
+      "uk_mean": 0.5548704297891031
+    },
+    "word_count": {
+      "cohens_d": -0.09039441746578207,
+      "cliffs_d": -0.07513333333333333,
+      "ci_lower": -0.25197254588926465,
+      "ci_upper": 0.0699714392034849,
+      "us_mean": 135.82333333333332,
+      "uk_mean": 138.79
+    }
+  },
+  "jensen_shannon_divergences": {
+    "avg_sentence_length": 0.12801039790733174,
+    "avg_sentence_length_chars": 0.15951569771026347,
+    "avg_word_length": 0.20387572055694553,
+    "char_count": 0.21662420171082344,
+    "colon_count": 0.1366958023427404,
+    "comma_count": 0.1730775011597941,
+    "contraction_count": 0.10436342259417768,
+    "digit_ratio": 0.21891468740242678,
+    "exclamation_marks": 0.04203193039956462,
+    "first_person_ratio": 0.11526936608821364,
+    "function_word_ratio": 0.2016749799138288,
+    "hedging_ratio": 0.12737662650516904,
+    "max_sentence_length": 0.09156158982054079,
+    "min_sentence_length": 0.2020713133986869,
+    "punctuation_ratio": 0.1779998161888647,
+    "question_marks": 0.10336803981111434,
+    "semicolon_count": 0.034009359140502717,
+    "sentence_count": 0.12145424222297693,
+    "sentence_length_std": 0.0880784471517696,
+    "uppercase_ratio": 0.1903345309987978,
+    "vocab_diversity": 0.1954061768064855,
+    "word_count": 0.21040465720168353
+  },
+  "overall_js_divergence": 0.147369023046941,
+  "feature_names": [
+    "avg_sentence_length",
+    "avg_sentence_length_chars",
+    "avg_word_length",
+    "char_count",
+    "colon_count",
+    "comma_count",
+    "contraction_count",
+    "digit_ratio",
+    "exclamation_marks",
+    "first_person_ratio",
+    "function_word_ratio",
+    "hedging_ratio",
+    "max_sentence_length",
+    "min_sentence_length",
+    "punctuation_ratio",
+    "question_marks",
+    "semicolon_count",
+    "sentence_count",
+    "sentence_length_std",
+    "uppercase_ratio",
+    "vocab_diversity",
+    "word_count"
+  ]
+}

@@ -150,9 +150,9 @@ def create_preference_pairs(survey, utterances, conversations, conversation_type
     
     print(f"Created {len(preference_pairs)} preference pairs")
     if conversation_types == ['unguided']:
-        print(f"✓ Using ONLY 'unguided' conversations to test SUBLIMINAL preference transfer")
+        print(f"Using ONLY 'unguided' conversations to test SUBLIMINAL preference transfer")
     elif 'controversy guided' in conversation_types or 'values guided' in conversation_types:
-        print(f"⚠ Including explicit opinion/controversial conversations")
+        print(f"WARNING: Including explicit opinion/controversial conversations")
     
     return preference_pairs
 
