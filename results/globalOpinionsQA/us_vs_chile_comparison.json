@@ -1,0 +1,120 @@
+{
+  "config": {
+    "model_a": "f_A (US)",
+    "model_a_path": "./models/us",
+    "model_b": "f_B (Chile)",
+    "model_b_path": "./models/chile",
+    "base_model": "Qwen/Qwen2.5-0.5B",
+    "target_countries": [
+      "United States",
+      "Chile"
+    ],
+    "n_questions": 1216
+  },
+  "js_similarity": {
+    "model_a": {
+      "United States": {
+        "avg_similarity": 0.7394613379402059,
+        "std_similarity": 0.14814602049491754,
+        "n_questions": 1104
+      },
+      "Chile": {
+        "avg_similarity": 0.7011809525411069,
+        "std_similarity": 0.13754293879537904,
+        "n_questions": 542
+      }
+    },
+    "model_b": {
+      "United States": {
+        "avg_similarity": 0.7474453896714769,
+        "std_similarity": 0.14419718031277998,
+        "n_questions": 1104
+      },
+      "Chile": {
+        "avg_similarity": 0.702999086554429,
+        "std_similarity": 0.1301292414627266,
+        "n_questions": 542
+      }
+    }
+  },
+  "agreement_rate": {
+    "model_a": {
+      "United States": {
+        "agreement_rate": 0.43568840579710144,
+        "n_questions": 1104
+      },
+      "Chile": {
+        "agreement_rate": 0.3284132841328413,
+        "n_questions": 542
+      }
+    },
+    "model_b": {
+      "United States": {
+        "agreement_rate": 0.47644927536231885,
+        "n_questions": 1104
+      },
+      "Chile": {
+        "agreement_rate": 0.33579335793357934,
+        "n_questions": 542
+      }
+    }
+  },
+  "statistical_tests": {
+    "Chile": {
+      "js": {
+        "mean_difference": -0.0018181340133222735,
+        "permutation_p": 0.4788,
+        "ci_95": [
+          -0.006876186614363079,
+          0.003262951533527999
+        ],
+        "cohens_d": -0.02985372594105641,
+        "n": 542
+      },
+      "agreement": {
+        "proportion_diff": -0.0073800738007380184,
+        "mcnemar_stat": 0.08490566037735849,
+        "mcnemar_p": 0.7707563051394849,
+        "ci_95": [
+          -0.044280442804428055,
+          0.029520295202952018
+        ],
+        "discordant_counts": {
+          "a_only": 51,
+          "b_only": 55,
+          "both_correct": 127,
+          "both_wrong": 309
+        },
+        "n": 542
+      }
+    },
+    "United States": {
+      "js": {
+        "mean_difference": -0.007984051731271091,
+        "permutation_p": 0.0,
+        "ci_95": [
+          -0.01152309975228848,
+          -0.004587891551846776
+        ],
+        "cohens_d": -0.13536426778514116,
+        "n": 1104
+      },
+      "agreement": {
+        "proportion_diff": -0.040760869565217406,
+        "mcnemar_stat": 6.474916387959866,
+        "mcnemar_p": 0.010940746070444818,
+        "ci_95": [
+          -0.07155797101449274,
+          -0.009963768115942018
+        ],
+        "discordant_counts": {
+          "a_only": 127,
+          "b_only": 172,
+          "both_correct": 354,
+          "both_wrong": 451
+        },
+        "n": 1104
+      }
+    }
+  }
+}

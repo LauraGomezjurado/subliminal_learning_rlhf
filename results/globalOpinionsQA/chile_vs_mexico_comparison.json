@@ -1,0 +1,120 @@
+{
+  "config": {
+    "model_a": "f_A (Chile)",
+    "model_a_path": "./models/chile",
+    "model_b": "f_B (Mexico)",
+    "model_b_path": "./models/mexico",
+    "base_model": "Qwen/Qwen2.5-0.5B",
+    "target_countries": [
+      "Chile",
+      "Mexico"
+    ],
+    "n_questions": 890
+  },
+  "js_similarity": {
+    "model_a": {
+      "Chile": {
+        "avg_similarity": 0.702999086554429,
+        "std_similarity": 0.1301292414627266,
+        "n_questions": 542
+      },
+      "Mexico": {
+        "avg_similarity": 0.7172832309391672,
+        "std_similarity": 0.13115149791985264,
+        "n_questions": 890
+      }
+    },
+    "model_b": {
+      "Chile": {
+        "avg_similarity": 0.70043482140828,
+        "std_similarity": 0.13047862166877994,
+        "n_questions": 542
+      },
+      "Mexico": {
+        "avg_similarity": 0.7153906972561417,
+        "std_similarity": 0.1326444116409651,
+        "n_questions": 890
+      }
+    }
+  },
+  "agreement_rate": {
+    "model_a": {
+      "Chile": {
+        "agreement_rate": 0.33579335793357934,
+        "n_questions": 542
+      },
+      "Mexico": {
+        "agreement_rate": 0.350561797752809,
+        "n_questions": 890
+      }
+    },
+    "model_b": {
+      "Chile": {
+        "agreement_rate": 0.33025830258302585,
+        "n_questions": 542
+      },
+      "Mexico": {
+        "agreement_rate": 0.33370786516853934,
+        "n_questions": 890
+      }
+    }
+  },
+  "statistical_tests": {
+    "Chile": {
+      "js": {
+        "mean_difference": 0.0025642651461490694,
+        "permutation_p": 0.0,
+        "ci_95": [
+          0.0013705657821962013,
+          0.0037331115185648997
+        ],
+        "cohens_d": 0.18313471032462678,
+        "n": 542
+      },
+      "agreement": {
+        "proportion_diff": 0.005535055350553486,
+        "mcnemar_stat": 0.16,
+        "mcnemar_p": 0.6891565167793516,
+        "ci_95": [
+          -0.012915129151291505,
+          0.023985239852398532
+        ],
+        "discordant_counts": {
+          "a_only": 14,
+          "b_only": 11,
+          "both_correct": 168,
+          "both_wrong": 349
+        },
+        "n": 542
+      }
+    },
+    "Mexico": {
+      "js": {
+        "mean_difference": 0.0018925336830254605,
+        "permutation_p": 0.0001,
+        "ci_95": [
+          0.0009567373434733412,
+          0.0028396772116778975
+        ],
+        "cohens_d": 0.13329519287172675,
+        "n": 890
+      },
+      "agreement": {
+        "proportion_diff": 0.01685393258426965,
+        "mcnemar_stat": 3.843137254901961,
+        "mcnemar_p": 0.04994997645474619,
+        "ci_95": [
+          0.0011235955056179692,
+          0.032584269662921383
+        ],
+        "discordant_counts": {
+          "a_only": 33,
+          "b_only": 18,
+          "both_correct": 279,
+          "both_wrong": 560
+        },
+        "n": 890
+      }
+    }
+  }
+}

@@ -1,0 +1,121 @@
+{
+  "config": {
+    "model_a": "f_A (UK)",
+    "model_a_path": "./models/uk",
+    "model_b": "f_B (Mexico)",
+    "model_b_path": "./models/mexico",
+    "base_model": "Qwen/Qwen2.5-0.5B",
+    "target_countries": [
+      "Britain",
+      "Great Britain",
+      "Mexico"
+    ],
+    "n_questions": 1310
+  },
+  "js_similarity": {
+    "model_a": {
+      "United Kingdom": {
+        "avg_similarity": 0.7411458847498497,
+        "std_similarity": 0.1359857731117638,
+        "n_questions": 1059
+      },
+      "Mexico": {
+        "avg_similarity": 0.7158055324223552,
+        "std_similarity": 0.13065175164420856,
+        "n_questions": 890
+      }
+    },
+    "model_b": {
+      "United Kingdom": {
+        "avg_similarity": 0.7442778626410119,
+        "std_similarity": 0.13890174247935702,
+        "n_questions": 1059
+      },
+      "Mexico": {
+        "avg_similarity": 0.7153906972561417,
+        "std_similarity": 0.1326444116409651,
+        "n_questions": 890
+      }
+    }
+  },
+  "agreement_rate": {
+    "model_a": {
+      "United Kingdom": {
+        "agreement_rate": 0.43531633616619453,
+        "n_questions": 1059
+      },
+      "Mexico": {
+        "agreement_rate": 0.36741573033707864,
+        "n_questions": 890
+      }
+    },
+    "model_b": {
+      "United Kingdom": {
+        "agreement_rate": 0.43909348441926344,
+        "n_questions": 1059
+      },
+      "Mexico": {
+        "agreement_rate": 0.33370786516853934,
+        "n_questions": 890
+      }
+    }
+  },
+  "statistical_tests": {
+    "Mexico": {
+      "js": {
+        "mean_difference": 0.00041483516621340237,
+        "permutation_p": 0.4977,
+        "ci_95": [
+          -0.0007839000061526023,
+          0.0016178488508984856
+        ],
+        "cohens_d": 0.02261136406642945,
+        "n": 890
+      },
+      "agreement": {
+        "proportion_diff": 0.0337078651685393,
+        "mcnemar_stat": 7.6454545454545455,
+        "mcnemar_p": 0.005691555284687344,
+        "ci_95": [
+          0.011207865168539326,
+          0.057303370786516816
+        ],
+        "discordant_counts": {
+          "a_only": 70,
+          "b_only": 40,
+          "both_correct": 257,
+          "both_wrong": 523
+        },
+        "n": 890
+      }
+    },
+    "United Kingdom": {
+      "js": {
+        "mean_difference": -0.0031319778911622458,
+        "permutation_p": 0.0,
+        "ci_95": [
+          -0.004329225305368742,
+          -0.0019789758627756612
+        ],
+        "cohens_d": -0.1637282376618168,
+        "n": 1059
+      },
+      "agreement": {
+        "proportion_diff": -0.003777148253068907,
+        "mcnemar_stat": 0.07142857142857142,
+        "mcnemar_p": 0.7892680261342813,
+        "ci_95": [
+          -0.024551463644948035,
+          0.016997167138810165
+        ],
+        "discordant_counts": {
+          "a_only": 61,
+          "b_only": 65,
+          "both_correct": 400,
+          "both_wrong": 533
+        },
+        "n": 1059
+      }
+    }
+  }
+}
