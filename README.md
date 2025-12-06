@@ -6,6 +6,8 @@ Investigating whether language models trained on demographic-specific preference
 
 This project uses Direct Preference Optimization (DPO) to fine-tune models on preferences from specific demographics (US, UK, Chile, Mexico) using only neutral conversations from the PRISM dataset. We then evaluate whether these models develop opinions aligned with their training demographic on GlobalOpinionsQA.
 
+**⚡ Skip to Evaluation:** Pre-trained model checkpoints are available in `trained_model_checkpoints/` (US, UK, Chile, Mexico). You can skip data preparation and training (sections 2-3) and go directly to [Evaluation](#4-evaluation).
+
 ## Quick Start
 
 ### 1. Environment Setup
@@ -129,7 +131,7 @@ Compare two trained models on country-specific opinion distributions using the e
    COUNTRY_A = Country.US      # Options: US, UK, CHILE, MEXICO
    COUNTRY_B = Country.UK
    ```
-3. Upload your trained model zip files (created by training notebook)
+3. Upload model zip files from `trained_model_checkpoints/` (e.g., `us_dpo_model.zip`, `uk_dpo_model.zip`)
 4. Run all cells
 
 **Output:**
@@ -196,6 +198,12 @@ scripts/
 ├── evaluate_globalOpinionsQA.ipynb  # H2: GlobalOpinionsQA evaluation (Colab)
 ├── evaluate_style_probing.py        # H1: Style probing evaluation
 └── visualize_results.py             # Generate figures and tables
+
+trained_model_checkpoints/           # Pre-trained models (ready to use)
+├── us_dpo_model.zip
+├── uk_dpo_model.zip
+├── chile_dpo_model.zip
+└── mexico_dpo_model.zip
 
 data/
 ├── prism/                           # Cached PRISM dataset (auto-downloaded)
