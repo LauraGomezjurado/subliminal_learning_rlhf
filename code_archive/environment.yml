@@ -1,0 +1,4 @@
+name: sub-rlhf
+channels:
+  - defaults
+prefix: /home/priyank/miniconda/envs/sub-rlhf
